@@ -1,7 +1,7 @@
 # Личный проект «Кэндишоп» [![Build status][travis-image]][travis-url]
 
 * Студент: [Снайпер](https://up.htmlacademy.ru/javascript/15/user/432537).
-* Наставник: `Неизвестно`.
+* Наставник: Кексобот.
 
 ---
 
