@@ -139,4 +139,8 @@ var makeCandys = function (names, pictures, contents, amount) {
   return candys;
 };
 
-makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 26);
+var candys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 26);
+
+var catalogCards = document.querySelector('.catalog__cards');
+catalogCards.classList.remove('catalog__cards--load');
+catalogCards.querySelector('.catalog__load').classList.add('visually-hidden');
