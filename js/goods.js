@@ -83,6 +83,19 @@ var CANDY_CONTENTS = [
   'виллабаджо'
 ];
 
+var CandyRatingToStarsCount = {
+  1: 'stars__rating--one',
+  2: 'stars__rating--two',
+  3: 'stars__rating--three',
+  4: 'stars__rating--four',
+  5: 'stars__rating--five'
+};
+
+/**
+ * Перемешивает значения исходного масива случайным образом и возвращает новый массив.
+ * @param {Array} arr - Исходный массив.
+ * @return {Array} - Перемешанный массив.
+ */
 var shuffleArray = function (arr) {
   var arrCopy = arr.slice();
   var result = [];
@@ -94,11 +107,22 @@ var shuffleArray = function (arr) {
   return result;
 };
 
+/**
+ * Возвращает случайное число в заданном диапазоне.
+ * @param {Number} minValue - Минимальное значение.
+ * @param {Number} maxValue - Максимальное значение.
+ * @return {Number} - Случайное число из заданного диапазона.
+ */
 var getRandomNumberFromRange = function (minValue, maxValue) {
   var result = Math.floor(minValue + Math.random() * (maxValue + 1));
   return (result > maxValue) ? --result : result;
 };
 
+/**
+ * Возвращает случайный набор ингридиентов.
+ * @param {Array} contents - Массив ингридиентов.
+ * @return {string} - Строка со случайным набором ингридиетов, разделённых запятой.
+ */
 var getContents = function (contents) {
   var result = '';
 
@@ -110,7 +134,14 @@ var getContents = function (contents) {
   return result;
 };
 
-
+/**
+ * Создаёт массив объектов сладостей.
+ * @param {Array} names - Массив названий сладостей.
+ * @param {Array} pictures - Массив изображений сладостей.
+ * @param {Array} contents - Массив ингридиентов сладостей.
+ * @param {Number} amount - Количество объектов со сладостями.
+ * @return {Array} - Массив объектов сладостей.
+ */
 var makeCandys = function (names, pictures, contents, amount) {
   names = shuffleArray(names);
   pictures = shuffleArray(pictures);
@@ -146,6 +177,11 @@ catalogCards.classList.remove('catalog__cards--load');
 catalogCards.querySelector('.catalog__load').classList.add('visually-hidden');
 var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
 
+/**
+ * Создаёт карточку с информацией о сладости.
+ * @param {Object} candy - Объект с информацие о сладости.
+ * @return {HTMLElement} - Заполенный данными элемент сладости.
+ */
 var renderCandy = function (candy) {
   var candyElement = catalogCardTemplate.cloneNode(true);
   var amountClass;
@@ -165,18 +201,7 @@ var renderCandy = function (candy) {
   cardPrice.innerHTML = candy.price + ' ' + '<span class="card__currency">₽</span>' +
     '<span class="card__weight">/' + ' ' + candy.weight + 'Г</span>';
 
-  var ratingClass;
-  if (candy.rating.value === 1) {
-    ratingClass = 'stars__rating--one';
-  } else if (candy.rating.value === 2) {
-    ratingClass = 'stars__rating--two';
-  } else if (candy.rating.value === 3) {
-    ratingClass = 'stars__rating--three';
-  } else if (candy.rating.value === 4) {
-    ratingClass = 'stars__rating--four';
-  } else if (candy.rating.value === 5) {
-    ratingClass = 'stars__rating--five';
-  }
+  var ratingClass = CandyRatingToStarsCount[candy.rating.value];
 
   var starRaiting = candyElement.querySelector('.stars__rating');
   starRaiting.classList = '';
@@ -202,6 +227,11 @@ var basketCardsTemplate = document.querySelector('#card-order').content.querySel
 fragment = document.createDocumentFragment();
 var basketCandys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 3);
 
+/**
+ * Создаёт карточку с информацией о сладости (для корзины).
+ * @param {Object} candy - Объект с информацие о сладости.
+ * @return {HTMLElement} - Заполенный данными о сладости элемент корзины.
+ */
 var renderCandyForBasket = function (candy) {
   var candyElement = basketCardsTemplate.cloneNode(true);
 
