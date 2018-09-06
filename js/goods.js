@@ -31,6 +31,37 @@ var CANDY_NAMES = [
   'Острый язычок'
 ];
 
+var PICTURES = [
+  'gum-cedar',
+  'gum-chile',
+  'gum-eggplant',
+  'gum-mustard',
+  'gum-portwine',
+  'gum-wasabi',
+  'ice-cucumber',
+  'ice-eggplant',
+  'ice-garlic',
+  'ice-italian',
+  'ice-mushroom',
+  'ice-pig',
+  'marmalade-beer',
+  'marmalade-caviar',
+  'marmalade-corn',
+  'marmalade-new-year',
+  'marmalade-sour',
+  'marshmallow-bacon',
+  'marshmallow-beer',
+  'marshmallow-shrimp',
+  'marshmallow-spicy',
+  'marshmallow-wine',
+  'soda-bacon',
+  'soda-celery',
+  'soda-cob',
+  'soda-garlic',
+  'soda-peanut-grapes',
+  'soda-russian'
+];
+
 var CANDY_CONTENTS = [
   'молоко',
   'сливки',
@@ -52,24 +83,60 @@ var CANDY_CONTENTS = [
   'виллабаджо'
 ];
 
-var getRandomNumer = function (minValue, maxValue) {
+var shuffleArray = function (arr) {
+  var arrCopy = arr.slice();
+  var result = [];
+  while (arrCopy.length) {
+    var randomArrayIndex = Math.floor(Math.random() * arrCopy.length);
+    result.push(arrCopy[randomArrayIndex]);
+    arrCopy.splice(randomArrayIndex, 1);
+  }
+  return result;
+};
+
+var getRandomNumber = function (minValue, maxValue) {
   var result = Math.floor(minValue + Math.random() * (maxValue + 1));
   return (result > maxValue) ? --result : result;
 };
 
-// var makeCandys = function (names, contents, amount) {
-//   var candys = [];
-//   for (var i = 0; i < amount; i++) {
-//     candys.push({
-//       name: names[i],
-//       amount: getRandomNumer(0, 20),
-//       price: 'undefined',
-//       weight: 'undefined',
-//       rating: {
-//         value: getRandomNumer(1, 5)
-//       }
-//
-//
-//     })
-//   }
-// }
+var getContents = function (contents) {
+  var result = '';
+
+  for (var i = 0; i < getRandomNumber(1, contents.length); i++) {
+    result += contents[i] + ', ';
+  }
+  result = result.slice(0, result.length - 2);
+
+  return result;
+};
+
+
+var makeCandys = function (names, pictures, contents, amount) {
+  names = shuffleArray(names);
+  pictures = shuffleArray(pictures);
+  contents = shuffleArray(contents);
+  var candys = [];
+
+  for (var i = 0; i < amount; i++) {
+    candys.push({
+      name: names[i],
+      picture: 'img/cards' + pictures[i] + '.jpg',
+      amount: getRandomNumber(0, 20),
+      price: getRandomNumber(100, 1500),
+      weight: getRandomNumber(30, 300),
+      rating: {
+        value: getRandomNumber(1, 5),
+        number: getRandomNumber(10, 900)
+      },
+      nutrition_facts: {
+        sugar: !!getRandomNumber(0, 1),
+        energy: getRandomNumber(70, 500),
+        contents: getContents(contents)
+      }
+    });
+  }
+
+  return candys;
+};
+
+makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 26);
