@@ -120,7 +120,7 @@ var makeCandys = function (names, pictures, contents, amount) {
   for (var i = 0; i < amount; i++) {
     candys.push({
       name: names[i],
-      picture: 'img/cards' + pictures[i] + '.jpg',
+      picture: './img/cards/' + pictures[i] + '.jpg',
       amount: getRandomNumber(0, 20),
       price: getRandomNumber(100, 1500),
       weight: getRandomNumber(30, 300),
@@ -128,7 +128,7 @@ var makeCandys = function (names, pictures, contents, amount) {
         value: getRandomNumber(1, 5),
         number: getRandomNumber(10, 900)
       },
-      nutrition_facts: {
+      nutritionFacts: {
         sugar: !!getRandomNumber(0, 1),
         energy: getRandomNumber(70, 500),
         contents: getContents(contents)
@@ -144,3 +144,56 @@ var candys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 26);
 var catalogCards = document.querySelector('.catalog__cards');
 catalogCards.classList.remove('catalog__cards--load');
 catalogCards.querySelector('.catalog__load').classList.add('visually-hidden');
+var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
+
+
+var renderCandy = function (candy) {
+  var candyElement = catalogCardTemplate.cloneNode(true);
+  var amountClass;
+  if (candy.amount === 0) {
+    amountClass = 'card--soon';
+  } else if (candy.amount >= 1 && candy.amount <= 5) {
+    amountClass = 'card--little';
+  } else if (candy.amount > 5) {
+    amountClass = 'card--in-stock';
+  }
+
+  candyElement.classList.add(amountClass);
+  candyElement.querySelector('.card__title').textContent = candy.name;
+  candyElement.querySelector('.card__price').textContent = candy.name;
+  candyElement.querySelector('.card__price')
+    .innerHTML = candy.price + ' ' + '<span class="card__currency">₽</span><span class="card__weight">/' + ' ' + candy.weight + 'Г</span>';
+
+  var ratingClass;
+  if (candy.rating.value === 1) {
+    ratingClass = 'stars__rating--one';
+  } else if (candy.rating.value === 2) {
+    ratingClass = 'stars__rating--two';
+  } else if (candy.rating.value === 3) {
+    ratingClass = 'stars__rating--three';
+  } else if (candy.rating.value === 4) {
+    ratingClass = 'stars__rating--four';
+  } else if (candy.rating.value === 5) {
+    ratingClass = 'stars__rating--five';
+  }
+
+  candyElement.querySelector('.stars__rating').classList.add(ratingClass);
+  candyElement.querySelector('.star__count').textContent = candy.rating.number;
+  candyElement.querySelector('.card__characteristic').textContent = candy.nutritionFacts.sugar ?
+    'Содержит сахар' : 'Без сахара';
+  candyElement.querySelector('.card__composition-list').textContent = candy.nutritionFacts.contents;
+  candyElement.querySelector('.card__img').src = candy.picture;
+
+  return candyElement;
+};
+
+
+var fragment = document.createDocumentFragment();
+
+for (var i = 0; i < candys.length; i++) {
+  fragment.appendChild(renderCandy(candys[i]));
+}
+
+catalogCards.appendChild(fragment);
+
+
