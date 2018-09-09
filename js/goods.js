@@ -201,8 +201,9 @@ var renderCandy = function (candy) {
 
   candyElement.querySelector('.card__title').textContent = candy.name;
   var cardPrice = candyElement.querySelector('.card__price');
-  cardPrice.innerHTML = candy.price + ' ' + '<span class="card__currency">₽</span>' +
-    '<span class="card__weight">/' + ' ' + candy.weight + 'Г</span>';
+  // В целях безопасности (во избежание XSS-атак) добавлен parseInt для получаемых извне значений.
+  cardPrice.innerHTML = parseInt(candy.price, 10) + ' ' + '<span class="card__currency">₽</span>' +
+    '<span class="card__weight">/' + ' ' + parseInt(candy.weight, 10) + 'Г</span>';
 
   var ratingClass = CANDY_RATINGS[candy.rating.value - 1];
 
