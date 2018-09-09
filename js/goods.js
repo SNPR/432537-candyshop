@@ -213,7 +213,9 @@ var renderCandy = function (candy) {
   candyElement.querySelector('.card__characteristic').textContent = candy.nutritionFacts.sugar ?
     'Содержит сахар' : 'Без сахара';
   candyElement.querySelector('.card__composition-list').textContent = candy.nutritionFacts.contents;
-  candyElement.querySelector('.card__img').src = candy.picture;
+  var candyImage = candyElement.querySelector('.card__img');
+  candyImage.src = candy.picture;
+  candyImage.alt = candy.name;
 
   return candyElement;
 };
@@ -240,7 +242,9 @@ var renderCandyForBasket = function (candy) {
 
   candyElement.querySelector('.card-order__title').textContent = candy.name;
   candyElement.querySelector('.card-order__price').textContent = candy.price + ' ₽';
-  candyElement.querySelector('.card-order__img').src = candy.picture;
+  var candyBasketImage = candyElement.querySelector('.card-order__img');
+  candyBasketImage.src = candy.picture;
+  candyBasketImage.alt = candy.name;
 
   return candyElement;
 };
