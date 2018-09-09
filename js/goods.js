@@ -85,7 +85,6 @@ var CANDY_CONTENTS = [
 
 var CANDYS_AMOUNT = 26;
 var CANDYS_BASKET_AMOUNT = 3;
-
 var CANDY_RATINGS = [
   'stars__rating--one',
   'stars__rating--two',
@@ -174,7 +173,6 @@ var makeCandys = function (names, pictures, contents, amount) {
 };
 
 var candys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, CANDYS_AMOUNT);
-
 var catalogCards = document.querySelector('.catalog__cards');
 catalogCards.classList.remove('catalog__cards--load');
 catalogCards.querySelector('.catalog__load').classList.add('visually-hidden');
@@ -198,15 +196,13 @@ var renderCandy = function (candy) {
   }
 
   candyElement.className = 'card catalog__card ' + amountClass;
-
   candyElement.querySelector('.card__title').textContent = candy.name;
+
   var cardPrice = candyElement.querySelector('.card__price');
-  // В целях безопасности (во избежание XSS-атак) добавлен parseInt для получаемых извне значений.
-  cardPrice.innerHTML = parseInt(candy.price, 10) + ' ' + '<span class="card__currency">₽</span>' +
-    '<span class="card__weight">/' + ' ' + parseInt(candy.weight, 10) + 'Г</span>';
+  cardPrice.childNodes[0].textContent = candy.price + ' ';
+  cardPrice.querySelector('.card__weight').textContent = '/ ' + candy.weight + 'Г';
 
   var ratingClass = CANDY_RATINGS[candy.rating.value - 1];
-
   var starRaiting = candyElement.querySelector('.stars__rating');
 
   starRaiting.className = 'stars__rating ' + ratingClass;
@@ -223,9 +219,9 @@ var renderCandy = function (candy) {
 
 var fragment = document.createDocumentFragment();
 
-for (var i = 0; i < candys.length; i++) {
-  fragment.appendChild(renderCandy(candys[i]));
-}
+candys.forEach(function (candy) {
+  fragment.appendChild(renderCandy(candy));
+});
 
 catalogCards.appendChild(fragment);
 
@@ -254,8 +250,8 @@ var goodCards = document.querySelector('.goods__cards');
 goodCards.classList.remove('goods__cards--empty');
 goodCards.querySelector('.goods__card-empty').classList.add('visually-hidden');
 
-for (i = 0; i < basketCandys.length; i++) {
-  fragment.appendChild(renderCandyForBasket(basketCandys[i]));
-}
+basketCandys.forEach(function (candy) {
+  fragment.appendChild(renderCandyForBasket(candy));
+});
 
 goodCards.appendChild(fragment);
