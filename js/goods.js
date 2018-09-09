@@ -86,13 +86,13 @@ var CANDY_CONTENTS = [
 var CANDYS_AMOUNT = 26;
 var CANDYS_BASKET_AMOUNT = 3;
 
-var CandyRatingToStarsCount = {
-  1: 'stars__rating--one',
-  2: 'stars__rating--two',
-  3: 'stars__rating--three',
-  4: 'stars__rating--four',
-  5: 'stars__rating--five'
-};
+var CANDY_RATINGS = [
+  'stars__rating--one',
+  'stars__rating--two',
+  'stars__rating--three',
+  'stars__rating--four',
+  'stars__rating--five'
+];
 
 /**
  * Перемешивает значения исходного масива случайным образом и возвращает новый массив.
@@ -197,18 +197,18 @@ var renderCandy = function (candy) {
     amountClass = 'card--in-stock';
   }
 
-  candyElement.classList = '';
-  candyElement.classList.add('card', 'catalog__card', amountClass);
+  candyElement.className = 'card catalog__card ' + amountClass;
+
   candyElement.querySelector('.card__title').textContent = candy.name;
   var cardPrice = candyElement.querySelector('.card__price');
   cardPrice.innerHTML = candy.price + ' ' + '<span class="card__currency">₽</span>' +
     '<span class="card__weight">/' + ' ' + candy.weight + 'Г</span>';
 
-  var ratingClass = CandyRatingToStarsCount[candy.rating.value];
+  var ratingClass = CANDY_RATINGS[candy.rating.value - 1];
 
   var starRaiting = candyElement.querySelector('.stars__rating');
-  starRaiting.classList = '';
-  starRaiting.classList.add('stars__rating', ratingClass);
+
+  starRaiting.className = 'stars__rating ' + ratingClass;
   candyElement.querySelector('.star__count').textContent = '(' + candy.rating.number + ')';
   candyElement.querySelector('.card__characteristic').textContent = candy.nutritionFacts.sugar ?
     'Содержит сахар' : 'Без сахара';
