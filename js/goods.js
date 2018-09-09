@@ -152,7 +152,7 @@ var makeCandys = function (names, pictures, contents, amount) {
   var candys = [];
 
   for (var i = 0; i < amount; i++) {
-    candys.push({
+    candys[i] = {
       name: names[i],
       picture: './img/cards/' + pictures[i] + '.jpg',
       amount: getRandomNumberFromRange(0, 20),
@@ -167,7 +167,7 @@ var makeCandys = function (names, pictures, contents, amount) {
         energy: getRandomNumberFromRange(70, 500),
         contents: getContents(contents)
       }
-    });
+    };
   }
 
   return candys;
