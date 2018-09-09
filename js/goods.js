@@ -83,6 +83,9 @@ var CANDY_CONTENTS = [
   'виллабаджо'
 ];
 
+var CANDYS_AMOUNT = 26;
+var CANDYS_BASKET_AMOUNT = 3;
+
 var CandyRatingToStarsCount = {
   1: 'stars__rating--one',
   2: 'stars__rating--two',
@@ -170,7 +173,7 @@ var makeCandys = function (names, pictures, contents, amount) {
   return candys;
 };
 
-var candys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 26);
+var candys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, CANDYS_AMOUNT);
 
 var catalogCards = document.querySelector('.catalog__cards');
 catalogCards.classList.remove('catalog__cards--load');
@@ -225,7 +228,7 @@ catalogCards.appendChild(fragment);
 
 var basketCardsTemplate = document.querySelector('#card-order').content.querySelector('.card-order');
 fragment = document.createDocumentFragment();
-var basketCandys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 3);
+var basketCandys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, CANDYS_BASKET_AMOUNT);
 
 /**
  * Создаёт карточку с информацией о сладости (для корзины).
