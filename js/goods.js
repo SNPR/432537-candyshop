@@ -83,13 +83,15 @@ var CANDY_CONTENTS = [
   'виллабаджо'
 ];
 
-var CandyRatingToStarsCount = {
-  1: 'stars__rating--one',
-  2: 'stars__rating--two',
-  3: 'stars__rating--three',
-  4: 'stars__rating--four',
-  5: 'stars__rating--five'
-};
+var CANDYS_AMOUNT = 26;
+var CANDYS_BASKET_AMOUNT = 3;
+var CANDY_RATINGS = [
+  'stars__rating--one',
+  'stars__rating--two',
+  'stars__rating--three',
+  'stars__rating--four',
+  'stars__rating--five'
+];
 
 /**
  * Перемешивает значения исходного масива случайным образом и возвращает новый массив.
@@ -124,14 +126,9 @@ var getRandomNumberFromRange = function (minValue, maxValue) {
  * @return {string} - Строка со случайным набором ингридиетов, разделённых запятой.
  */
 var getContents = function (contents) {
-  var result = '';
-
-  for (var i = 0; i < getRandomNumberFromRange(1, contents.length); i++) {
-    result += contents[i] + ', ';
-  }
-  result = result.slice(0, result.length - 2);
-
-  return result;
+  contents = shuffleArray(contents);
+  contents.length = getRandomNumberFromRange(1, contents.length);
+  return contents.join(', ');
 };
 
 /**
@@ -145,11 +142,11 @@ var getContents = function (contents) {
 var makeCandys = function (names, pictures, contents, amount) {
   names = shuffleArray(names);
   pictures = shuffleArray(pictures);
-  contents = shuffleArray(contents);
+
   var candys = [];
 
   for (var i = 0; i < amount; i++) {
-    candys.push({
+    candys[i] = {
       name: names[i],
       picture: './img/cards/' + pictures[i] + '.jpg',
       amount: getRandomNumberFromRange(0, 20),
@@ -164,14 +161,13 @@ var makeCandys = function (names, pictures, contents, amount) {
         energy: getRandomNumberFromRange(70, 500),
         contents: getContents(contents)
       }
-    });
+    };
   }
 
   return candys;
 };
 
-var candys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 26);
-
+var candys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, CANDYS_AMOUNT);
 var catalogCards = document.querySelector('.catalog__cards');
 catalogCards.classList.remove('catalog__cards--load');
 catalogCards.querySelector('.catalog__load').classList.add('visually-hidden');
@@ -194,38 +190,39 @@ var renderCandy = function (candy) {
     amountClass = 'card--in-stock';
   }
 
-  candyElement.classList = '';
-  candyElement.classList.add('card', 'catalog__card', amountClass);
+  candyElement.className = 'card catalog__card ' + amountClass;
   candyElement.querySelector('.card__title').textContent = candy.name;
+
   var cardPrice = candyElement.querySelector('.card__price');
-  cardPrice.innerHTML = candy.price + ' ' + '<span class="card__currency">₽</span>' +
-    '<span class="card__weight">/' + ' ' + candy.weight + 'Г</span>';
+  cardPrice.childNodes[0].textContent = candy.price + ' ';
+  cardPrice.querySelector('.card__weight').textContent = '/ ' + candy.weight + 'Г';
 
-  var ratingClass = CandyRatingToStarsCount[candy.rating.value];
-
+  var ratingClass = CANDY_RATINGS[candy.rating.value - 1];
   var starRaiting = candyElement.querySelector('.stars__rating');
-  starRaiting.classList = '';
-  starRaiting.classList.add('stars__rating', ratingClass);
+
+  starRaiting.className = 'stars__rating ' + ratingClass;
   candyElement.querySelector('.star__count').textContent = '(' + candy.rating.number + ')';
   candyElement.querySelector('.card__characteristic').textContent = candy.nutritionFacts.sugar ?
     'Содержит сахар' : 'Без сахара';
   candyElement.querySelector('.card__composition-list').textContent = candy.nutritionFacts.contents;
-  candyElement.querySelector('.card__img').src = candy.picture;
+  var candyImage = candyElement.querySelector('.card__img');
+  candyImage.src = candy.picture;
+  candyImage.alt = candy.name;
 
   return candyElement;
 };
 
 var fragment = document.createDocumentFragment();
 
-for (var i = 0; i < candys.length; i++) {
-  fragment.appendChild(renderCandy(candys[i]));
-}
+candys.forEach(function (candy) {
+  fragment.appendChild(renderCandy(candy));
+});
 
 catalogCards.appendChild(fragment);
 
 var basketCardsTemplate = document.querySelector('#card-order').content.querySelector('.card-order');
 fragment = document.createDocumentFragment();
-var basketCandys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, 3);
+var basketCandys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, CANDYS_BASKET_AMOUNT);
 
 /**
  * Создаёт карточку с информацией о сладости (для корзины).
@@ -237,7 +234,9 @@ var renderCandyForBasket = function (candy) {
 
   candyElement.querySelector('.card-order__title').textContent = candy.name;
   candyElement.querySelector('.card-order__price').textContent = candy.price + ' ₽';
-  candyElement.querySelector('.card-order__img').src = candy.picture;
+  var candyBasketImage = candyElement.querySelector('.card-order__img');
+  candyBasketImage.src = candy.picture;
+  candyBasketImage.alt = candy.name;
 
   return candyElement;
 };
@@ -246,8 +245,8 @@ var goodCards = document.querySelector('.goods__cards');
 goodCards.classList.remove('goods__cards--empty');
 goodCards.querySelector('.goods__card-empty').classList.add('visually-hidden');
 
-for (i = 0; i < basketCandys.length; i++) {
-  fragment.appendChild(renderCandyForBasket(basketCandys[i]));
-}
+basketCandys.forEach(function (candy) {
+  fragment.appendChild(renderCandyForBasket(candy));
+});
 
 goodCards.appendChild(fragment);
