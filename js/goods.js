@@ -269,3 +269,17 @@ var lunhAlgorithm = function (cardNumber) {
   return (result % 10) ? false : true;
 };
 
+var cardNumberField = document.querySelector('#payment__card-number');
+
+cardNumberField.addEventListener('input', function (evt) {
+  var target = evt.target;
+
+  if (!lunhAlgorithm(target.value)) {
+    target.setCustomValidity('Некорретный номер карты');
+  } else if (target.value.length !== 16) {
+    target.setCustomValidity('Номер карты должен быть 16 символов длиной');
+  } else {
+    target.setCustomValidity('');
+  }
+});
+
