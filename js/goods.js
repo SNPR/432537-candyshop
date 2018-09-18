@@ -169,8 +169,8 @@ var makeCandys = function (names, pictures, contents, amount) {
 
 var candys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, CANDYS_AMOUNT);
 var catalogCards = document.querySelector('.catalog__cards');
-// catalogCards.classList.remove('catalog__cards--load');
-// catalogCards.querySelector('.catalog__load').classList.add('visually-hidden');
+catalogCards.classList.remove('catalog__cards--load');
+catalogCards.querySelector('.catalog__load').classList.add('visually-hidden');
 var catalogCardTemplate = document.querySelector('#card').content.querySelector('.catalog__card');
 
 /**
@@ -218,7 +218,7 @@ candys.forEach(function (candy) {
   fragment.appendChild(renderCandy(candy));
 });
 
-// catalogCards.appendChild(fragment);
+catalogCards.appendChild(fragment);
 
 var basketCardsTemplate = document.querySelector('#card-order').content.querySelector('.card-order');
 fragment = document.createDocumentFragment();
@@ -242,15 +242,20 @@ var renderCandyForBasket = function (candy) {
 };
 
 var goodCards = document.querySelector('.goods__cards');
-// goodCards.classList.remove('goods__cards--empty');
-// goodCards.querySelector('.goods__card-empty').classList.add('visually-hidden');
+goodCards.classList.remove('goods__cards--empty');
+goodCards.querySelector('.goods__card-empty').classList.add('visually-hidden');
 
 basketCandys.forEach(function (candy) {
   fragment.appendChild(renderCandyForBasket(candy));
 });
 
-// goodCards.appendChild(fragment);
+goodCards.appendChild(fragment);
 
+/**
+ * Алгоритм Луна. Проверяет на валидность номер пластиковой карты.
+ * @param {String} cardNumber - Номер карты.
+ * @return {Boolean} - Возвращает true если карта валидна, false - если нет.
+ */
 var lunhAlgorithm = function (cardNumber) {
   var numbersArray = cardNumber.split('').map(function (number) {
     return +number;
