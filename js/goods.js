@@ -288,3 +288,15 @@ cardNumberField.addEventListener('input', function (evt) {
   }
 });
 
+var cardFavouriteButtons = document.querySelectorAll('.card__btn-favorite');
+
+cardFavouriteButtons.forEach(function (button) {
+  button.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    evt.target.classList.toggle('card__btn-favorite--selected');
+    // Сбрасываем фокус текущей кнопки "избранное". Необходимо это для того,
+    // чтобы стиль card__btn-favorite--selected удалялся сразу при нажатии на кнопку
+    document.activeElement.blur();
+  });
+});
+
