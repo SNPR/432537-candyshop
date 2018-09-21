@@ -84,7 +84,6 @@ var CANDY_CONTENTS = [
 ];
 
 var CANDYS_AMOUNT = 26;
-var CANDYS_BASKET_AMOUNT = 3;
 var CANDY_RATINGS = [
   'stars__rating--one',
   'stars__rating--two',
@@ -222,7 +221,6 @@ catalogCards.appendChild(fragment);
 
 var basketCardsTemplate = document.querySelector('#card-order').content.querySelector('.card-order');
 fragment = document.createDocumentFragment();
-var basketCandys = makeCandys(CANDY_NAMES, PICTURES, CANDY_CONTENTS, CANDYS_BASKET_AMOUNT);
 
 /**
  * Создаёт карточку с информацией о сладости (для корзины).
@@ -234,6 +232,7 @@ var renderCandyForBasket = function (candy) {
 
   candyElement.querySelector('.card-order__title').textContent = candy.name;
   candyElement.querySelector('.card-order__price').textContent = candy.price + ' ₽';
+  candyElement.querySelector('.card-order__count').value = candy.orderedAmount;
   var candyBasketImage = candyElement.querySelector('.card-order__img');
   candyBasketImage.src = candy.picture;
   candyBasketImage.alt = candy.name;
@@ -244,12 +243,6 @@ var renderCandyForBasket = function (candy) {
 var goodCards = document.querySelector('.goods__cards');
 goodCards.classList.remove('goods__cards--empty');
 goodCards.querySelector('.goods__card-empty').classList.add('visually-hidden');
-
-basketCandys.forEach(function (candy) {
-  fragment.appendChild(renderCandyForBasket(candy));
-});
-
-goodCards.appendChild(fragment);
 
 /**
  * Алгоритм Луна. Проверяет на валидность номер пластиковой карты.
@@ -300,3 +293,43 @@ cardFavouriteButtons.forEach(function (button) {
   });
 });
 
+var candyCards = document.querySelectorAll('.catalog__card');
+
+var prepareCandyForBasket = function (candy) {
+  var candyForBasket = Object.assign({orderedAmount: 1}, candy);
+  delete candyForBasket.amount;
+  delete candyForBasket.rating;
+  delete candyForBasket.nutritionFacts;
+
+  return candyForBasket;
+};
+
+var basketCandys = [];
+
+var renderBasketCandy = function (candysArray, candyName) {
+  candysArray.forEach(function (candy) {
+    if (candy.name === candyName) {
+      var candyForBasket = prepareCandyForBasket(candy);
+      if (basketCandys.length === 0) {
+        basketCandys.push(candyForBasket);
+      }
+      basketCandys.forEach(function (basketCandy) {
+        if (basketCandy.name === candyForBasket.name) {
+          basketCandy.orderedAmount++;
+        }
+      });
+      goodCards.appendChild(renderCandyForBasket(candyForBasket));
+    }
+  });
+};
+
+candyCards.forEach(function (card) {
+  card.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    if (evt.target.classList.contains('card__btn')) {
+      var currentCandyName = evt.currentTarget.querySelector('.card__title').textContent;
+      renderBasketCandy(candys, currentCandyName);
+    }
+  });
+
+});
