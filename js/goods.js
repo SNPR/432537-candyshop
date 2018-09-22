@@ -220,14 +220,13 @@ candys.forEach(function (candy) {
 catalogCards.appendChild(fragment);
 
 var basketCardsTemplate = document.querySelector('#card-order').content.querySelector('.card-order');
-fragment = document.createDocumentFragment();
 
 /**
  * Создаёт карточку с информацией о сладости (для корзины).
  * @param {Object} candy - Объект с информацие о сладости.
  * @return {HTMLElement} - Заполенный данными о сладости элемент корзины.
  */
-var renderCandyForBasket = function (candy) {
+var prepareCandyCardForBasket = function (candy) {
   var candyElement = basketCardsTemplate.cloneNode(true);
 
   candyElement.querySelector('.card-order__title').textContent = candy.name;
@@ -295,7 +294,13 @@ cardFavouriteButtons.forEach(function (button) {
 
 var candyCards = document.querySelectorAll('.catalog__card');
 
-var prepareCandyForBasket = function (candy) {
+/**
+ * Подготавливает объект сладости для корзины, удаляя лишнее поля и
+ * добавляя одно дополнительное поле.
+ * @param {Object} candy - Исходный объект сладости.
+ * @return {Object} candyForBasket - Подготовленный для корзины объект сладости.
+ */
+var prepareCandyObjectForBasket = function (candy) {
   var candyForBasket = Object.assign({orderedAmount: 1}, candy);
   delete candyForBasket.amount;
   delete candyForBasket.rating;
@@ -306,19 +311,52 @@ var prepareCandyForBasket = function (candy) {
 
 var basketCandys = [];
 
-var renderBasketCandy = function (candysArray, candyName) {
+/**
+ * Проверяет на наличие одинаковых сладостей в корзине. В случае совпадения,
+ * увеличивает количество сладостей в корзине. В случае несовпадения, добавляет
+ * карточку со сладостью в корзину.
+ * @param {Array} basketCandysArray - Массив объектов сладостей корзины.
+ * @param {Object} currentCandyItem - Текущий объект сладости, на который только что
+ * кликнул пользователь.
+ */
+var checkDuplicatesInBasket = function (basketCandysArray, currentCandyItem) {
+  var duplicateFounded = false;
+
+  basketCandysArray.forEach(function (candy) {
+    if (candy.name === currentCandyItem.name) {
+      candy.orderedAmount++;
+      duplicateFounded = true;
+    }
+  });
+  if (duplicateFounded) {
+    return;
+  } else {
+    basketCandysArray.push(currentCandyItem);
+  }
+};
+
+/**
+ * Добавляет карточку сладости в корзину.
+ * @param {Array} candysArray - Массив объектов всех сладостей.
+ * @param {String} candyName - Наименование сладости, на которую только что
+ * кликнул пользователь.
+ */
+var renderCandyCardInBasket = function (candysArray, candyName) {
   candysArray.forEach(function (candy) {
     if (candy.name === candyName) {
-      var candyForBasket = prepareCandyForBasket(candy);
+      var currentBasketCandyItem = prepareCandyObjectForBasket(candy);
       if (basketCandys.length === 0) {
-        basketCandys.push(candyForBasket);
+        basketCandys.push(currentBasketCandyItem);
+      } else {
+        checkDuplicatesInBasket(basketCandys, currentBasketCandyItem);
       }
+
+      fragment = document.createDocumentFragment();
       basketCandys.forEach(function (basketCandy) {
-        if (basketCandy.name === candyForBasket.name) {
-          basketCandy.orderedAmount++;
-        }
+        fragment.appendChild(prepareCandyCardForBasket(basketCandy));
       });
-      goodCards.appendChild(renderCandyForBasket(candyForBasket));
+      goodCards.innerHTML = '';
+      goodCards.appendChild(fragment);
     }
   });
 };
@@ -328,8 +366,7 @@ candyCards.forEach(function (card) {
     evt.preventDefault();
     if (evt.target.classList.contains('card__btn')) {
       var currentCandyName = evt.currentTarget.querySelector('.card__title').textContent;
-      renderBasketCandy(candys, currentCandyName);
+      renderCandyCardInBasket(candys, currentCandyName);
     }
   });
-
 });
